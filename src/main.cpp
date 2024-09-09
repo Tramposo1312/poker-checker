@@ -30,6 +30,13 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void** ppData)
 
 extern "C" const AMX_NATIVE_INFO native_list[] = {
     { "MyFunction", Natives::MyFunction },
+    { "CheckPair", Natives::CheckPair },
+    { "CheckTwoPairs", Natives::CheckTwoPairs },
+    { "CheckThreeOfAKind", Natives::CheckThreeOfAKind },
+    { "CheckFourOfAKind", Natives::CheckFourOfAKind },
+    { "GetBestHand", Natives::GetBestHand },
+    { "GetHighestCard", Natives::GetHighestCard },
+    { "CardValueToString", Natives::CardValueToString },
     { NULL, NULL }
 };
 

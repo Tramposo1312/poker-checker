@@ -1,50 +1,96 @@
-#
-# Package only files
-#
+# SA:MP server files
+announce.exe
+samp-npc.exe
+samp-server.exe
+server.cfg
+server_log.txt
+server-readme.txt
 
-# Compiled Bytecode
+# Compiled server scripts
 *.amx
 
-# Vendor directory for dependencies
-dependencies/
+# SA:MP related directories
+/scriptfiles/
+/npcmodes/
+/filterscripts/
+/gamemodes/
+/plugins/
 
-# Dependency versions lockfile
-pawn.lock
+# Build directories
+/build/
+/out/
 
+# Dependencies
+/dependencies/
 
-#
-# Server/gamemode related files
-#
-
-# compiled settings file
-# keep `samp.json` file on version control
-# but make sure the `rcon_password` field is set externally
-# you can use the environment variable `SAMP_RCON_PASSWORD` to do this.
-server.cfg
-
-# Plugins directory
-plugins/
-
-# binaries
-*.exe
-*.dll
-*.so
-announce
-samp03svr
-samp-npc
-
-# logs
-logs/
-server_log.txt
-
-#
-# Common files
-#
-
-*.sublime-workspace
-*.sublime-project
-
-build/
+# IDE and editor files
+.vscode/
 .vs/
-*.so
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Compiled Object files
+*.slo
+*.lo
 *.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+!CMakeLists.txt
+
+# Other
+*.log
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
+*.ilk
+*.exp
+
+# Keep specific plugin files
+!POKER_CHECKER.inc
+!poker_checker_version.inc
+!README.md
+!LICENSE
+!src/
+!CMakeLists.txt
+
+pawno/
+models/
+.dockerignore
+.gitmodules
+travis.yml
+appveyor.yml
+bintray.json
+makefile
+pawn.json
+samp-license.txt

@@ -1,9 +1,9 @@
 {
   "gamemodes": ["test"],
-  "plugins": ["projectname"],
-  "rcon_password": ";,JoTh856/:?",
+  "plugins": ["pokerchecker"],
+  "rcon_password": "",
   "port": 7777,
-  "hostname": "test",
+  "hostname": "",
   "maxplayers": 32,
-  "mode": "y_testing"
+  "mode": ""
 }

@@ -3,7 +3,7 @@
 #include <a_samp>
 #include <YSI\y_testing>
 
-#include "../../PAWN_INCLUDE.inc"
+#include "../../POKER_CHECKER.inc"
 
 main() {
     //
@@ -12,5 +12,5 @@ main() {
 Test:RunTest() {
     new ret = MyFunction();
     printf("ret: %d", ret);
-    ASSERT(ret == 1);
+    ASSERT(ret == 0);
 }

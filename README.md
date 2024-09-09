@@ -1,185 +1,136 @@
-# Yet Another SA:MP Plugin Boilerplate
+# Poker Checker Plugin for SA:MP
 
-## Introduction
+This plugin provides functions to evaluate poker hands in SA:MP scripts.
 
-This is a SA:MP plugin boilerplate/starter kit project for developing plugins in C++. The project includes a quick and
-simple way to test plugins on multiple platforms as well as a CMake setup and a full CI/CD configuration for building on
-[Travis CI](https://travis-ci.org/Southclaws/samp-plugin-boilerplate/) and
-[Appveyor](https://ci.appveyor.com/project/Southclaws/samp-plugin-boilerplate) as well as deploying binaries to
-[Bintray](https://bintray.com/southclaws/samp-plugin-boilerplate).
+## Features
 
-It's in no way an exhaustive "tutorial" per se but it should be a good place to get started. I noticed the tutorial by
-Kyosaur (which is a fantastic tutorial still) was showing a bit of age - that being said, you should still read it!
+- Check for various poker hands (Pair, Two Pairs, Three of a Kind, Four of a Kind)
+- Determine the best hand from a set of cards
+- Find the highest card in a hand
+- Convert card values to string representations
 
-## Prerequisites
+## Installation
 
-### Required
+1. Copy the `pokerchecker.dll` (Windows) or `pokerchecker.so` (Linux) to your server's `plugins` folder.
+2. Add `pokerchecker` to the `plugins` line in your `server.cfg` file.
+3. Copy `POKER_CHECKER.inc` to your `pawno/include` directory.
 
-#### Visual Studio
+## Usage
 
-I tested with 2017 but 2015 should work too.
+Include the poker checker in your PAWN script:
 
-#### CMake 3+
-
-This is used for generating the project files. If you're using VS 2017, you can also directly open the CMakeLists.txt
-file from `File > Open > CMake...`.
-
-If you can't use Visual Studio's built in CMake support, just use CMake as normal. First create a directory called
-`build` (or whatever you like, `build` is a common name), `cd` into it and run `cmake ..`. This will generate a Visual
-Studio solution file which you can open as you would any solution. Any changes to any `CMakeLists.txt` will require
-regenerating the project files.
-
-#### Basic Command-Line Knowledge
-
-I use Git-Bash for Windows but PowerShell or Cmd will work just as well.
-
-### Optional
-
-#### Docker
-
-this means you can compile the plugin for Linux while using a Windows machine (I assume most users here are on Windows).
-You could use a VM for this but Docker makes the process much simpler and automated via a couple of simple commands.
-
-- [Get Docker CE](https://docs.docker.com/install/)
-
-#### make
-
-just because I put all the commands into a basic makefile for easier execution. You don't need make as you can just open
-up the makefile and run the commands listed there manually.
-
-- [Get GNU Make for Windows](http://gnuwin32.sourceforge.net/downlinks/make.php)
-
-#### sampctl
-
-This makes testing the plugin on a SA:MP server a lot easier because the copying of the .dll and setup of the server is
-all automated. All you need to do is edit the `.inc` and write some test code into `test.pwn` and run `make test-native`
-each time you edit the plugin!
-
-- [Get sampctl](http://sampctl.com/)
-
-## First Run Tasks
-
-When you first clone the repo, you need to do some housework before you can begin writing plugin code.
-
-### Submodules
-
-If you don't clone the repository recursively, run the following to get the required dependencies:
-
-```powershell
-git submodule init
-git submodule update
+```pawn
+#include <POKER_CHECKER>
 ```
 
-### Replacements
+### Available Functions
 
-Because this is a template, there are certain parts that use a placeholder as a project name. Do a find-and-replace
-(CTRL+Shift+F in most editors) across all files for the following:
+#### Check for Specific Hands
 
-- `projectname`: your project name, should be lowercase and alphabetic only - is used in CMake project name, pawn.json
-  repo name and in test files
-- `PROJECTNAME`: your project name but all uppercase - is used in preprocessor macros for include guards
-
-Also rename `PAWN_INCLUDE.inc` to your project's preferred include name and edit `test/gamemodes/test.pwn` for the new
-include filename.
-
-### Prepare Pawn Tests
-
-If you plan to use the server tests, you should pull the required Pawn deps for both the package itself and the server
-instance that's nested in `test/`:
-
-```powershell
-make test-setup
+```pawn
+native bool:CheckPair(card1, card2, card3, card4);
+native bool:CheckTwoPairs(card1, card2, card3, card4);
+native bool:CheckThreeOfAKind(card1, card2, card3, card4);
+native bool:CheckFourOfAKind(card1, card2, card3, card4);
 ```
 
-This runs `sampctl server ensure` inside `test/` and `sampctl package ensure` in the project root.
-
-### Create a CMake Build Directory
-
-If you plan to use the CMake command line, run:
-
-```powershell
-mkdir build
-cd build
-cmake ..
+Example:
+```pawn
+new bool:hasPair = CheckPair(5, 5, 7, 9);
+printf("Has Pair: %s", hasPair ? "Yes" : "No");
 ```
 
-And that will generate a Visual Studio project inside `build/` ready for you to open in Visual Studio.
+#### Get Best Hand
 
-Alternatively, you can simply open Visual Studio and click `File > Open > CMake...` and just open the `CMakeLists.txt`
-file directly for a slightly different development experience.
+```pawn
+native HandRank:GetBestHand(card1, card2, card3, card4);
+```
 
-## Explanation of Every Important File
+Example:
+```pawn
+new HandRank:bestHand = GetBestHand(5, 5, 5, 9);
+printf("Best Hand: %s", GetHandRankName(bestHand));
+```
 
-### `makefile`
+#### Get Highest Card
 
-The makefile is the starting point, but it's not related to the C++ code at all, it's simply a task list for managing
-tests.
+```pawn
+native GetHighestCard(card1, card2, card3, card4);
+```
 
-Run `make test-setup` before doing anything to get everything set up. You should only need to do this once. This runs
-`sampctl server ensure` inside `test/` which uses the declarative `samp.json` file to automatically set up a SA:MP
-server instance inside of the `test` directory. Don't worry, the `.gitignore` is already set up to ignore the server
-related files. It then runs `sampctl package ensure` to download the necessary dependencies for building the Pawn test
-script - this is just the SA:MP standard library and YSI for y_testing.
+Example:
+```pawn
+new highestCard = GetHighestCard(5, 10, 7, 9);
+printf("Highest Card: %d", highestCard);
+```
 
-Run `make test-native` to:
+#### Convert Card Value to String
 
-- build the Pawn test script to an .amx with y_testing
-- run the test script as a full SA:MP server instance
+```pawn
+native CardValueToString(cardValue, string[], len = sizeof(string));
+```
 
-You should see `Function called` among the typical SA:MP boilerplate text and y_testing output.
+Example:
+```pawn
+new cardString[32];
+CardValueToString(14, cardString, sizeof(cardString));
+printf("Card: %s", cardString); // Output: "Card: Ace"
+```
 
-Run `make test-container` to:
+### Hand Rank Enumeration
 
-- build the Pawn test script to an .amx with y_testing
-- run the test script in a Linux Docker container
+```pawn
+enum HandRank {
+    HandRank_HighCard,
+    HandRank_Pair,
+    HandRank_TwoPairs,
+    HandRank_ThreeOfAKind,
+    HandRank_Straight,
+    HandRank_Flush,
+    HandRank_FullHouse,
+    HandRank_FourOfAKind
+};
+```
 
-### `src`
+## Example Script
 
-This contains the C++ source code. Read the file head comments in order:
+Here's a complete example demonstrating all features:
 
-- `main.cpp`
-- `common.hpp`
-- `natives.hpp`
-- `natives.cpp`
-- `impl.hpp`
-- `impl.cpp`
+```pawn
+#include <a_samp>
+#include <POKER_CHECKER>
 
-`CMakeLists.txt` declares which files are relevant to the build process. I'm not a CMake expert so I'll avoid going any
-further with this.
+main() {
+    // Check for a pair
+    new bool:hasPair = CheckPair(5, 5, 7, 9);
+    printf("Has Pair: %s", hasPair ? "Yes" : "No");
 
-### `lib`
+    // Get best hand
+    new HandRank:bestHand = GetBestHand(5, 5, 5, 9);
+    printf("Best Hand: %d", _:bestHand);
 
-This contains external dependencies. These are libraries required by this project, this includes `cmake-modules` by Zeex
-which provides some useful CMake stuff for working with SA:MP plugins and `samp-plugin-sdk` which is the software
-development kit for working with SA:MP itself. These are all declared as Git submodules (`.gitmodules`) and are
-updatable with `git submodule update`.
+    // Get highest card
+    new highestCard = GetHighestCard(5, 10, 7, 9);
+    printf("Highest Card: %d", highestCard);
 
-#### How do I Add New Dependencies?
+    // Convert card value to string
+    new cardString[32];
+    CardValueToString(14, cardString, sizeof(cardString));
+    printf("Card: %s", cardString);
+}
+```
 
-Because this project uses CMake, if you want to use a dependency that is also using CMake you can simply
-`git submodule add <url> lib/<name>` then add it to the top-level `CMakeLists.txt`. It's not always that straightforward
-though annoyingly but that's just the way of the C++ world...
+## Notes
 
-### `Dockerfile`
+- Card values range from 2 to 14, where 11 = Jack, 12 = Queen, 13 = King, and 14 = Ace.
+- This plugin does not currently handle card suits.
 
-If you're new to docker, this file declares an "Image" which is an isolated filesystem running a particular operating
-system - in our case it derives from `maddinat0r/debian-samp` which is a Debian image built specifically for compiling
-SA:MP plugins by maddinat0r. This means you can compile an .so on Windows very easily by running `make build-container`
+## Future Enhancements
 
-### `.travis.yml` and `bintray.json`
+- Add support for card suits
+- Implement Straight and Flush detection
+- Add hand comparison functionality
 
-This configures Travis CI to build the Linux version of the plugin whenever commits as pushed to GitHub. It will also
-upload the resulting `.so` file to Bintray after a successful build. You must configure the Bintray fields and
-`bintray.json` with your own details. See [this page](https://docs.travis-ci.com/user/deployment/bintray/) for more
-information.
+## Support
 
-### `appveyor.yml`
-
-This configures Appveyor to build the Windows version of the plugin whenever commits as pushed to GitHub. It will also
-upload the resulting `.dll` file to Bintray after a successful build. You must configure the Bintray fields with your
-own details. See [this page](https://www.appveyor.com/docs/deployment/bintray/) for more information.
-
-## Conclusion
-
-I hope someone found this useful for their next plugin, if there are any actual problems in the boilerplate code/setup I
-shall create a new repo and cherry-pick the commit over so it can be modified for future users.
+For issues, feature requests, or contributions, please [open an issue](https://github.com/yourusername/pokerchecker/issues) on the GitHub repository.
