@@ -28,10 +28,6 @@ After installation, include the plugin in your .pwn file:
 ```pawn
 #include <POKER_CHECKER>
 ```
-Add the plugin to your server.cfg:
-```bash
-plugins pokerchecker
-```
 
 ### Available Functions
 
