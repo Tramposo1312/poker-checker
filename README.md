@@ -165,7 +165,6 @@ To extend the functionality of the Poker Checker plugin, consider the following:
    - Add new test cases to `test_pokerchecker.pwn`
    - Run the test script on a SAMP server to verify your changes
 
-
 ## Missing Features
 
 1. **Suit Support**: Adding suit support would allow for more accurate hand evaluations, including:
@@ -181,3 +180,23 @@ To extend the functionality of the Poker Checker plugin, consider the following:
 5. **Player Position Handling**: Add support for handling and evaluating the significance of player positions in a poker game.
 
 6. **Hand History and Analysis**: Add features to record and analyze hand histories, which could be useful for player statistics and game review.
+
+## Integration with playing-cards Library
+
+To enhance the visual and textual representation of cards in your SAMP poker games, we recommend using the [`playing-cards`](https://github.com/DignitySAMP/omp-playing-cards) library alongside the Poker Checker Plugin.
+
+The `playing-cards` library complements Poker Checker Plugin by providing:
+
+1. Easy retrieval of card sprite names for rendering cards on screen
+2. Simple functions to get human-readable card names
+3. Consistent naming conventions for card sets and values
+
+This combination allows you to handle both the game logic and the presentation aspects of your poker game efficiently.
+
+### Getting Started with playing-cards
+
+For installation instructions, usage details, and examples, visit the official repository:
+
+[https://github.com/DignitySAMP/omp-playing-cards](https://github.com/DignitySAMP/omp-playing-cards)
+
+By combining these libraries, you can create more engaging and visually appealing poker games in SAMP, handling everything from game logic to user interface elements with ease.

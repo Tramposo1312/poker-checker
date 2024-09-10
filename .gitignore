@@ -13,10 +13,10 @@ server-readme.txt
 /scriptfiles/
 /npcmodes/
 /filterscripts/
-/plugins/
 
 # Build directories
 /build/
+!/build/Release/
 /out/
 
 # Dependencies
@@ -41,9 +41,7 @@ server-readme.txt
 *.pch
 
 # Compiled Dynamic libraries
-*.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -93,3 +91,7 @@ bintray.json
 makefile
 pawn.json
 samp-license.txt
+
+# Allow Release build outputs
+!/build/Release/*.dll
+!/build/Release/*.so

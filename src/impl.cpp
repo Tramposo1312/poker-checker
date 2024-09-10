@@ -58,12 +58,9 @@ namespace Impl {
     }
 
     bool checkFlush(const std::array<int, 5>& hand) {
-        // Assuming the last digit of each card represents the suit (e.g., 14 for Ace of Hearts, 24 for Ace of Diamonds)
-        int suit = hand[0] % 10;
-        for (int i = 1; i < 5; ++i) {
-            if (hand[i] % 10 != suit) {
-                return false;
-            }
+        int suit = hand[0] / 13;
+        for (int i = 1; i < 5; i++) {
+            if (hand[i] / 13 != suit) return false;
         }
         return true;
     }
@@ -83,11 +80,18 @@ namespace Impl {
     }
 
     bool checkRoyalFlush(const std::array<int, 5>& hand) {
-        // We can't check for royal flush without suit information
-        return false;
+        if (!checkFlush(hand)) return false;
+        std::array<int, 5> values;
+        for (int i = 0; i < 5; i++) {
+            values[i] = hand[i] % 13; // 0-12 represents 2-Ace
+        }
+        std::sort(values.begin(), values.end());
+        return (values[0] == 8 && values[1] == 9 && values[2] == 10 && values[3] == 11 && values[4] == 12);
     }
 
     HandRank getHandRank(const std::array<int, 5>& hand) {
+        if (checkRoyalFlush(hand)) return HandRank::RoyalFlush;
+        if (checkStraightFlush(hand)) return HandRank::StraightFlush;
         if (checkFourOfAKind(hand)) return HandRank::FourOfAKind;
         if (checkFullHouse(hand)) return HandRank::FullHouse;
         if (checkFlush(hand)) return HandRank::Flush;
