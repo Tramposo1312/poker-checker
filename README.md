@@ -16,12 +16,21 @@ This plugin provides comprehensive functions to evaluate and compare poker hands
 2. Add `pokerchecker` to the `plugins` line in your `server.cfg` file.
 3. Copy `POKER_CHECKER.inc` to your `pawno/include` directory.
 
-## Usage
+## Installation with sampctl
 
-Include the poker checker in your PAWN script:
+Run the following command in your project directory:
+
+```bash
+sampctl install Tramposo1312/poker-checker
+```
+After installation, include the plugin in your .pwn file:
 
 ```pawn
 #include <POKER_CHECKER>
+```
+Add the plugin to your server.cfg:
+```bash
+plugins pokerchecker
 ```
 
 ### Available Functions
@@ -183,17 +192,15 @@ To extend the functionality of the Poker Checker plugin, consider the following:
 
 ## Integration with playing-cards Library
 
-To enhance the visual and textual representation of cards in your SAMP poker games, we recommend using the [`playing-cards`](https://github.com/DignitySAMP/omp-playing-cards) library alongside the Poker Checker Plugin.
+To enhance the visual and textual representation of cards in your SAMP poker games, consider using the [`playing-cards`](https://github.com/DignitySAMP/omp-playing-cards) library alongside the Poker-Checker Plugin.
 
-The `playing-cards` library complements Poker Checker Plugin by providing:
+The `playing-cards` library complements Poker-Checker Plugin by providing:
 
 1. Easy retrieval of card sprite names for rendering cards on screen
 2. Simple functions to get human-readable card names
 3. Consistent naming conventions for card sets and values
 
 This combination allows you to handle both the game logic and the presentation aspects of your poker game efficiently.
-
-### Getting Started with playing-cards
 
 For installation instructions, usage details, and examples, visit the official repository:
 
