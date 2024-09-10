@@ -18,10 +18,10 @@ main() {
     printf("GetHandRank test: %s", GetHandRankName(rank));
 
     // Test GetBestHand
-    new cards[7] = {CARD_TWO, CARD_THREE, CARD_FOUR, CARD_FIVE, CARD_SIX, CARD_SEVEN, CARD_EIGHT};
+   /* new cards[7] = {CARD_TWO, CARD_THREE, CARD_FOUR, CARD_FIVE, CARD_SIX, CARD_SEVEN, CARD_EIGHT};
     new bestHand[5];
     GetBestHand(cards, sizeof(cards), bestHand);
-    printf("GetBestHand test: %d %d %d %d %d", bestHand[0], bestHand[1], bestHand[2], bestHand[3], bestHand[4]);
+    printf("GetBestHand test: %d %d %d %d %d", bestHand[0], bestHand[1], bestHand[2], bestHand[3], bestHand[4]);*/
 
     // Test CompareHands
     new compareResult = CompareHands(

@@ -3,7 +3,7 @@
 	"repo": "poker-checker",
 	"tag": "0.0.1",
 	"entry": "gamemodes\\test_pokerchecker.pwn",
-	"output": "gamemodes/gamemodes\\test_pokerchecker.amx",
+	"output": "gamemodes\\test_pokerchecker.amx",
 	"dependencies": [
 		"pawn-lang/samp-stdlib"
 	]

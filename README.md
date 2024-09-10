@@ -1,6 +1,6 @@
 # Poker Checker Plugin for SA:MP
 
-This plugin provides comprehensive functions to evaluate and compare poker hands in SA:MP scripts.
+This plugin provides comprehensive functions to evaluate and compare poker hands in SAMP scripts.
 
 ## Features
 
@@ -82,3 +82,102 @@ printf("Hand Rank: %s", rankName);
 ## Testing
 
 A comprehensive test script (`test_pokerchecker.pwn`) is provided to verify all functions of the plugin.
+
+## Building the Project
+
+To build the Poker Checker plugin from source, follow these steps:
+
+1. **Prerequisites:**
+   - Install a C++ compiler (Visual Studio on Windows, GCC on Linux)
+   - Install CMake (version 3.10 or later)
+
+2. **Setup:**
+   - Clone this repository:
+     ```
+     git clone https://github.com/Tramposo1312/poker-checker.git
+     cd poker-checker
+     ```
+   - 
+3. **Build:**
+   - Create a build directory:
+     ```
+     mkdir build
+     cd build
+     ```
+   - Generate build files with CMake:
+     - For Windows: `cmake -G "Visual Studio 17 2022" [or whatever your compiler version is] -A Win32 ..`
+     - For Linux: `cmake ..`
+   - Build the project:
+     - For Windows: `cmake --build . --config Release`
+     - For Linux: `make`
+
+4. **Output:**
+   - The compiled plugin (`pokerchecker.dll` or `pokerchecker.so`) will be in the `build/Release` directory on Windows or the `build` directory on Linux
+
+## Developing the Plugin Further
+
+To extend the functionality of the Poker Checker plugin, consider the following:
+
+1. **Understanding the Structure:**
+   - `src/impl.hpp` and `src/impl.cpp`: Core implementation of poker logic
+   - `src/natives.hpp` and `src/natives.cpp`: Bridge between PAWN and C++ code
+   - `src/main.cpp`: Plugin entry point and native function registration
+
+2. **Working with CMakeLists.txt:**
+   - The `CMakeLists.txt` file in the root directory configures the build process
+   - To add new source files:
+     ```cmake
+     add_library(pokerchecker SHARED
+         ${EXISTING_SOURCE_FILES}
+         src/your_new_file.cpp
+     )
+     ```
+   - To link additional libraries:
+     ```cmake
+     target_link_libraries(pokerchecker
+         ${EXISTING_LIBRARIES}
+         your_new_library
+     )
+     ```
+   - To add include directories:
+     ```cmake
+     target_include_directories(pokerchecker PRIVATE
+         ${EXISTING_INCLUDE_DIRS}
+         path/to/new/include/dir
+     )
+     ```
+   - Remember to regenerate your build files after modifying CMakeLists.txt
+
+3. **Adding New Functions:**
+   - Implement the logic in `impl.cpp`
+   - Add the function declaration to `impl.hpp`
+   - Create a new native function in `natives.cpp` that calls your implementation
+   - Add the native function declaration to `natives.hpp`
+   - Register the new native in `main.cpp` by adding it to the `native_list` array
+   - Update `POKER_CHECKER.inc` with the new native function for PAWN scripts
+
+4. **Modifying Existing Functions:**
+   - Locate the function in `impl.cpp`
+   - Make your changes, ensuring you update any related functions
+   - If the function signature changes, update it in `impl.hpp` and potentially in `natives.cpp`
+
+5. **Testing:**
+   - Add new test cases to `test_pokerchecker.pwn`
+   - Run the test script on a SAMP server to verify your changes
+
+
+## Missing Features
+
+1. **Suit Support**: Adding suit support would allow for more accurate hand evaluations, including:
+   - Proper flush detection
+   - Straight flush and royal flush detection
+
+2. **Probability Calculations**: Add functions to calculate the probability of improving a hand given the current cards and potential players' cards.
+
+3. **Pot Odds Calculation**: Implement a function to calculate pot odds, which can help in decision-making during gameplay.
+
+4. **Hand Strength Evaluation**: Feat an improved hand strength evaluator that takes into account not just the hand rank, but also the specific cards within that rank.
+
+5. **Player Position Handling**: Add support for handling and evaluating the significance of player positions in a poker game.
+
+6. **Hand History and Analysis**: Add features to record and analyze hand histories, which could be useful for player statistics and game review.
