@@ -1,20 +1,12 @@
-/*
-# impl.hpp
+#ifndef POKER_CHECKER_IMPL_HPP
+#define POKER_CHECKER_IMPL_HPP
 
-From here on, it's just regular C++ code, no AMX/Pawn/SA:MP stuff. This header
-is for declaring implementation functions for the plugin's core functionality.
-*/
-
-#ifndef PROJECTNAME_IMPL_H
-#define PROJECTNAME_IMPL_H
+#include <array>
+#include <vector>
 
 namespace Impl {
-    bool checkPair(int card1, int card2, int card3, int card4);
-    bool checkTwoPairs(int card1, int card2, int card3, int card4);
-    bool checkThreeOfAKind(int card1, int card2, int card3, int card4);
-    bool checkFourOfAKind(int card1, int card2, int card3, int card4);
 
-    enum HandRank {
+    enum class HandRank {
         HighCard,
         Pair,
         TwoPairs,
@@ -22,16 +14,32 @@ namespace Impl {
         Straight,
         Flush,
         FullHouse,
-        FourOfAKind
+        FourOfAKind,
+        StraightFlush,
+        RoyalFlush
     };
 
-    HandRank getBestHand(int card1, int card2, int card3, int card4);
+    bool checkPair(const std::array<int, 5>& hand);
+    bool checkTwoPairs(const std::array<int, 5>& hand);
+    bool checkThreeOfAKind(const std::array<int, 5>& hand);
+    bool checkStraight(const std::array<int, 5>& hand);
+    bool checkFlush(const std::array<int, 5>& hand);
+    bool checkFullHouse(const std::array<int, 5>& hand);
+    bool checkFourOfAKind(const std::array<int, 5>& hand);
+    bool checkStraightFlush(const std::array<int, 5>& hand);
+    bool checkRoyalFlush(const std::array<int, 5>& hand);
 
+    HandRank getHandRank(const std::array<int, 5>& hand);
+    std::array<int, 5> getBestHand(const int* cards, size_t numCards);
+    int compareHands(const std::array<int, 5>& hand1, const std::array<int, 5>& hand2);
+    int getHighestCard(const std::array<int, 5>& hand);
+
+    const char* handRankToString(HandRank rank);
     const char* cardValueToString(int cardValue);
 
-    int getHighestCard(int card1, int card2, int card3, int card4);
+    // Utility functions
+    std::array<int, 5> sortHand(const std::array<int, 5>& hand);
 
-
-};
+} 
 
 #endif

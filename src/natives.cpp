@@ -9,121 +9,107 @@ The code here acts as the translation between AMX data types and native types.
 
 #include "natives.hpp"
 #include "impl.hpp"
-#include "common.hpp"
+#include <array>
+#include <cstring>
 
-
-
-cell Natives::MyFunction(AMX* amx, cell* params) {
-    logprintf("Hello world!");
-    return 0;
-}
-cell Natives::CheckPair(AMX* amx, cell* params) {
-    // We expect 5 parameters (command + 4 card values)
-    if (params[0] != 4 * sizeof(cell)) {
-        logprintf("Error: Expected 4 card values");
-        return 0;
+namespace {
+    std::array<int, 5> getHandFromParams(AMX* amx, cell* params) {
+        return {
+            static_cast<int>(params[1]),
+            static_cast<int>(params[2]),
+            static_cast<int>(params[3]),
+            static_cast<int>(params[4]),
+            static_cast<int>(params[5])
+        };
     }
-
-    // Extract card values
-    int card1 = static_cast<int>(params[1]);
-    int card2 = static_cast<int>(params[2]);
-    int card3 = static_cast<int>(params[3]);
-    int card4 = static_cast<int>(params[4]);
-
-    // Call the implementation function
-    bool isPair = Impl::checkPair(card1, card2, card3, card4);
-
-    logprintf("Checked for pair: %s", isPair ? "true" : "false");
-
-    return isPair ? 1 : 0;
 }
 
-cell Natives::CheckTwoPairs(AMX* amx, cell* params) {
-    if (params[0] != 4 * sizeof(cell)) {
-        logprintf("Error: Expected 4 card values");
-        return 0;
+namespace Natives {
+
+    cell CheckPair(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkPair(hand) ? 1 : 0;
     }
-    int card1 = static_cast<int>(params[1]);
-    int card2 = static_cast<int>(params[2]);
-    int card3 = static_cast<int>(params[3]);
-    int card4 = static_cast<int>(params[4]);
-    bool hasTwoPairs = Impl::checkTwoPairs(card1, card2, card3, card4);
-    logprintf("Checked for two pairs: %s", hasTwoPairs ? "true" : "false");
-    return hasTwoPairs ? 1 : 0;
-}
 
-cell Natives::CheckThreeOfAKind(AMX* amx, cell* params) {
-    if (params[0] != 4 * sizeof(cell)) {
-        logprintf("Error: Expected 4 card values");
-        return 0;
+    cell CheckTwoPairs(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkTwoPairs(hand) ? 1 : 0;
     }
-    int card1 = static_cast<int>(params[1]);
-    int card2 = static_cast<int>(params[2]);
-    int card3 = static_cast<int>(params[3]);
-    int card4 = static_cast<int>(params[4]);
-    bool hasThreeOfAKind = Impl::checkThreeOfAKind(card1, card2, card3, card4);
-    logprintf("Checked for three of a kind: %s", hasThreeOfAKind ? "true" : "false");
-    return hasThreeOfAKind ? 1 : 0;
-}
 
-cell Natives::CheckFourOfAKind(AMX* amx, cell* params) {
-    if (params[0] != 4 * sizeof(cell)) {
-        logprintf("Error: Expected 4 card values");
-        return 0;
+    cell CheckThreeOfAKind(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkThreeOfAKind(hand) ? 1 : 0;
     }
-    int card1 = static_cast<int>(params[1]);
-    int card2 = static_cast<int>(params[2]);
-    int card3 = static_cast<int>(params[3]);
-    int card4 = static_cast<int>(params[4]);
-    bool hasFourOfAKind = Impl::checkFourOfAKind(card1, card2, card3, card4);
-    logprintf("Checked for four of a kind: %s", hasFourOfAKind ? "true" : "false");
-    return hasFourOfAKind ? 1 : 0;
-}
 
-cell Natives::GetBestHand(AMX* amx, cell* params) {
-    if (params[0] != 4 * sizeof(cell)) {
-        logprintf("Error: GetBestHand expected 4 card values");
-        return 0;
+    cell CheckStraight(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkStraight(hand) ? 1 : 0;
     }
-    int card1 = static_cast<int>(params[1]);
-    int card2 = static_cast<int>(params[2]);
-    int card3 = static_cast<int>(params[3]);
-    int card4 = static_cast<int>(params[4]);
 
-    Impl::HandRank bestHand = Impl::getBestHand(card1, card2, card3, card4);
-    logprintf("Best hand determined: %d", static_cast<int>(bestHand));
-    return static_cast<cell>(bestHand);
-}
-
-cell Natives::GetHighestCard(AMX* amx, cell* params) {
-    if (params[0] != 4 * sizeof(cell)) {
-        logprintf("Error: GetHighestCard expected 4 card values");
-        return 0;
+    cell CheckFlush(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkFlush(hand) ? 1 : 0;
     }
-    int card1 = static_cast<int>(params[1]);
-    int card2 = static_cast<int>(params[2]);
-    int card3 = static_cast<int>(params[3]);
-    int card4 = static_cast<int>(params[4]);
 
-    int highestCard = Impl::getHighestCard(card1, card2, card3, card4);
-    logprintf("Highest card determined: %d", highestCard);
-    return static_cast<cell>(highestCard);
-}
-
-cell Natives::CardValueToString(AMX* amx, cell* params) {
-    if (params[0] != 3 * sizeof(cell)) {
-        logprintf("Error: CardValueToString expected 3 parameters");
-        return 0;
+    cell CheckFullHouse(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkFullHouse(hand) ? 1 : 0;
     }
-    int cardValue = static_cast<int>(params[1]);
 
-    const char* cardString = Impl::cardValueToString(cardValue);
+    cell CheckFourOfAKind(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::checkFourOfAKind(hand) ? 1 : 0;
+    }
 
-    cell* addr = NULL;
-    amx_GetAddr(amx, params[2], &addr);
-    amx_SetString(addr, cardString, 0, 0, params[3]);
+    cell GetHandRank(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return static_cast<cell>(Impl::getHandRank(hand));
+    }
 
-    logprintf("Debug: CardValueToString input: %d, output: %s", cardValue, cardString);
+    cell Natives::GetBestHand(AMX* amx, cell* params) {
+        int numCards = params[0] / sizeof(cell);
+        std::array<int, 5> bestHand = Impl::getBestHand(&params[1], numCards);
+        cell* addr = nullptr;
+        amx_GetAddr(amx, params[numCards + 1], &addr);
+        for (int i = 0; i < 5; ++i) {
+            addr[i] = bestHand[i];
+        }
+        return 1;
+    }
 
-    return strlen(cardString);
+    cell CompareHands(AMX* amx, cell* params) {
+        auto hand1 = getHandFromParams(amx, params);
+        std::array<int, 5> hand2 = {
+            static_cast<int>(params[6]),
+            static_cast<int>(params[7]),
+            static_cast<int>(params[8]),
+            static_cast<int>(params[9]),
+            static_cast<int>(params[10])
+        };
+        return Impl::compareHands(hand1, hand2);
+    }
+
+    cell GetHighestCard(AMX* amx, cell* params) {
+        auto hand = getHandFromParams(amx, params);
+        return Impl::getHighestCard(hand);
+    }
+
+    cell HandRankToString(AMX* amx, cell* params) {
+        Impl::HandRank rank = static_cast<Impl::HandRank>(params[1]);
+        const char* rankString = Impl::handRankToString(rank);
+        cell* addr = nullptr;
+        amx_GetAddr(amx, params[2], &addr);
+        amx_SetString(addr, rankString, 0, 0, params[3]);
+        return std::strlen(rankString);
+    }
+
+    cell CardValueToString(AMX* amx, cell* params) {
+        int cardValue = static_cast<int>(params[1]);
+        const char* cardString = Impl::cardValueToString(cardValue);
+        cell* addr = nullptr;
+        amx_GetAddr(amx, params[2], &addr);
+        amx_SetString(addr, cardString, 0, 0, params[3]);
+        return std::strlen(cardString);
+    }
+
 }

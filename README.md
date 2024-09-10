@@ -1,13 +1,14 @@
 # Poker Checker Plugin for SA:MP
 
-This plugin provides functions to evaluate poker hands in SA:MP scripts.
+This plugin provides comprehensive functions to evaluate and compare poker hands in SA:MP scripts.
 
 ## Features
 
-- Check for various poker hands (Pair, Two Pairs, Three of a Kind, Four of a Kind)
+- Check for various poker hands (Pair, Two Pairs, Three of a Kind, Straight, Flush, Full House, Four of a Kind)
 - Determine the best hand from a set of cards
-- Find the highest card in a hand
-- Convert card values to string representations
+- Compare two poker hands
+- Get the highest card from a hand
+- Convert hand ranks and card values to string representations
 
 ## Installation
 
@@ -28,109 +29,56 @@ Include the poker checker in your PAWN script:
 #### Check for Specific Hands
 
 ```pawn
-native bool:CheckPair(card1, card2, card3, card4);
-native bool:CheckTwoPairs(card1, card2, card3, card4);
-native bool:CheckThreeOfAKind(card1, card2, card3, card4);
-native bool:CheckFourOfAKind(card1, card2, card3, card4);
+native bool:CheckPair(card1, card2, card3, card4, card5);
+native bool:CheckTwoPairs(card1, card2, card3, card4, card5);
+native bool:CheckThreeOfAKind(card1, card2, card3, card4, card5);
+native bool:CheckStraight(card1, card2, card3, card4, card5);
+native bool:CheckFlush(card1, card2, card3, card4, card5);
+native bool:CheckFullHouse(card1, card2, card3, card4, card5);
+native bool:CheckFourOfAKind(card1, card2, card3, card4, card5);
 ```
 
-Example:
+#### Hand Evaluation
+
 ```pawn
-new bool:hasPair = CheckPair(5, 5, 7, 9);
-printf("Has Pair: %s", hasPair ? "Yes" : "No");
+native HandRank:GetHandRank(card1, card2, card3, card4, card5);
+native GetBestHand(const cards[], cardsCount, bestHand[5]);
+native CompareHands(hand1_card1, hand1_card2, hand1_card3, hand1_card4, hand1_card5, 
+                    hand2_card1, hand2_card2, hand2_card3, hand2_card4, hand2_card5);
+native GetHighestCard(card1, card2, card3, card4, card5);
 ```
 
-#### Get Best Hand
+#### Utility Functions
 
 ```pawn
-native HandRank:GetBestHand(card1, card2, card3, card4);
-```
-
-Example:
-```pawn
-new HandRank:bestHand = GetBestHand(5, 5, 5, 9);
-printf("Best Hand: %s", GetHandRankName(bestHand));
-```
-
-#### Get Highest Card
-
-```pawn
-native GetHighestCard(card1, card2, card3, card4);
-```
-
-Example:
-```pawn
-new highestCard = GetHighestCard(5, 10, 7, 9);
-printf("Highest Card: %d", highestCard);
-```
-
-#### Convert Card Value to String
-
-```pawn
+native HandRankToString(HandRank:rank, string[], len = sizeof(string));
 native CardValueToString(cardValue, string[], len = sizeof(string));
 ```
 
-Example:
-```pawn
-new cardString[32];
-CardValueToString(14, cardString, sizeof(cardString));
-printf("Card: %s", cardString); // Output: "Card: Ace"
-```
+### Constants
 
-### Hand Rank Enumeration
+The plugin provides constants for card values:
 
 ```pawn
-enum HandRank {
-    HandRank_HighCard,
-    HandRank_Pair,
-    HandRank_TwoPairs,
-    HandRank_ThreeOfAKind,
-    HandRank_Straight,
-    HandRank_Flush,
-    HandRank_FullHouse,
-    HandRank_FourOfAKind
-};
+#define CARD_TWO    2
+#define CARD_THREE  3
+...
+#define CARD_KING   13
+#define CARD_ACE    14
 ```
 
-## Example Script
-
-Here's a complete example demonstrating all features:
+## Example
 
 ```pawn
-#include <a_samp>
-#include <POKER_CHECKER>
+new bool:isPair = CheckPair(CARD_ACE, CARD_ACE, CARD_KING, CARD_QUEEN, CARD_JACK);
+printf("Is Pair: %s", isPair ? "Yes" : "No");
 
-main() {
-    // Check for a pair
-    new bool:hasPair = CheckPair(5, 5, 7, 9);
-    printf("Has Pair: %s", hasPair ? "Yes" : "No");
-
-    // Get best hand
-    new HandRank:bestHand = GetBestHand(5, 5, 5, 9);
-    printf("Best Hand: %d", _:bestHand);
-
-    // Get highest card
-    new highestCard = GetHighestCard(5, 10, 7, 9);
-    printf("Highest Card: %d", highestCard);
-
-    // Convert card value to string
-    new cardString[32];
-    CardValueToString(14, cardString, sizeof(cardString));
-    printf("Card: %s", cardString);
-}
+new HandRank:rank = GetHandRank(CARD_ACE, CARD_KING, CARD_QUEEN, CARD_JACK, CARD_TEN);
+new rankName[32];
+HandRankToString(rank, rankName);
+printf("Hand Rank: %s", rankName);
 ```
 
-## Notes
+## Testing
 
-- Card values range from 2 to 14, where 11 = Jack, 12 = Queen, 13 = King, and 14 = Ace.
-- This plugin does not currently handle card suits.
-
-## Future Enhancements
-
-- Add support for card suits
-- Implement Straight and Flush detection
-- Add hand comparison functionality
-
-## Support
-
-For issues, feature requests, or contributions, please [open an issue](https://github.com/yourusername/pokerchecker/issues) on the GitHub repository.
+A comprehensive test script (`test_pokerchecker.pwn`) is provided to verify all functions of the plugin.
