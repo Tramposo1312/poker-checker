@@ -29,7 +29,7 @@ After installation, include the plugin in your .pwn file:
 #include <POKER_CHECKER>
 ```
 
-### Available Functions
+## Available Functions
 
 #### Check for Specific Hands
 
