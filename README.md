@@ -9,6 +9,7 @@ This plugin provides comprehensive functions to evaluate and compare poker hands
 - Compare two poker hands
 - Get the highest card from a hand
 - Convert hand ranks and card values to string representations
+- Support for card suits
 
 ## Installation
 
@@ -18,7 +19,7 @@ This plugin provides comprehensive functions to evaluate and compare poker hands
 
 ## Installation with sampctl
 
-Run the following command in your project directory:
+Run this command in your project directory:
 
 ```bash
 sampctl install Tramposo1312/poker-checker
@@ -31,33 +32,40 @@ After installation, include the plugin in your .pwn file:
 
 ## Available Functions
 
-#### Check for Specific Hands
-
+### Card Creation and Manipulation
 ```pawn
-native bool:CheckPair(card1, card2, card3, card4, card5);
-native bool:CheckTwoPairs(card1, card2, card3, card4, card5);
-native bool:CheckThreeOfAKind(card1, card2, card3, card4, card5);
-native bool:CheckStraight(card1, card2, card3, card4, card5);
-native bool:CheckFlush(card1, card2, card3, card4, card5);
-native bool:CheckFullHouse(card1, card2, card3, card4, card5);
-native bool:CheckFourOfAKind(card1, card2, card3, card4, card5);
+native Card:CreateCard(value, Suit:suit);
+native GetCardValue(Card:card);
+native Suit:GetCardSuit(Card:card);
 ```
 
-#### Hand Evaluation
-
+### Hand-Checking Functions
 ```pawn
-native HandRank:GetHandRank(card1, card2, card3, card4, card5);
-native GetBestHand(const cards[], cardsCount, bestHand[5]);
-native CompareHands(hand1_card1, hand1_card2, hand1_card3, hand1_card4, hand1_card5, 
-                    hand2_card1, hand2_card2, hand2_card3, hand2_card4, hand2_card5);
-native GetHighestCard(card1, card2, card3, card4, card5);
+native bool:CheckPair(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckTwoPairs(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckThreeOfAKind(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckStraight(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckFlush(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckFullHouse(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckFourOfAKind(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckStraightFlush(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native bool:CheckRoyalFlush(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
 ```
 
-#### Utility Functions
+### Hand Evaluation Functions
+```pawn
+native HandRank:GetHandRank(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+native GetBestHand(const Card:cards[], cardsCount, Card:bestHand[5]);
+native CompareHands(Card:hand1_card1, Card:hand1_card2, Card:hand1_card3, Card:hand1_card4, Card:hand1_card5, 
+                    Card:hand2_card1, Card:hand2_card2, Card:hand2_card3, Card:hand2_card4, Card:hand2_card5);
+native Card:GetHighestCard(Card:card1, Card:card2, Card:card3, Card:card4, Card:card5);
+```
 
+### Utility Functions
 ```pawn
 native HandRankToString(HandRank:rank, string[], len = sizeof(string));
 native CardValueToString(cardValue, string[], len = sizeof(string));
+native SuitToString(Suit:suit, string[], len = sizeof(string));
 ```
 
 ### Constants
@@ -70,19 +78,30 @@ The plugin provides constants for card values:
 ...
 #define CARD_KING   13
 #define CARD_ACE    14
-```
 
+enum Suit {
+    Suit_Hearts,
+    Suit_Diamonds,
+    Suit_Clubs,
+    Suit_Spades
+}
+```
 ## Example
 
 ```pawn
-new bool:isPair = CheckPair(CARD_ACE, CARD_ACE, CARD_KING, CARD_QUEEN, CARD_JACK);
-printf("Is Pair: %s", isPair ? "Yes" : "No");
+new Card:hand[5];
+hand[0] = CreateCard(CARD_ACE, Suit_Hearts);
+hand[1] = CreateCard(CARD_KING, Suit_Hearts);
+hand[2] = CreateCard(CARD_QUEEN, Suit_Hearts);
+hand[3] = CreateCard(CARD_JACK, Suit_Hearts);
+hand[4] = CreateCard(CARD_TEN, Suit_Hearts);
 
-new HandRank:rank = GetHandRank(CARD_ACE, CARD_KING, CARD_QUEEN, CARD_JACK, CARD_TEN);
+new HandRank:rank = GetHandRank(hand[0], hand[1], hand[2], hand[3], hand[4]);
 new rankName[32];
 HandRankToString(rank, rankName);
 printf("Hand Rank: %s", rankName);
 ```
+
 
 ## Testing
 
@@ -90,7 +109,7 @@ A comprehensive test script (`test_pokerchecker.pwn`) is provided to verify all 
 
 ## Building the Project
 
-To build the Poker Checker plugin from source, follow these steps:
+To build the Poker Checker plugin from source:
 
 1. **Prerequisites:**
    - Install a C++ compiler (Visual Studio on Windows, GCC on Linux)
@@ -119,39 +138,37 @@ To build the Poker Checker plugin from source, follow these steps:
 4. **Output:**
    - The compiled plugin (`pokerchecker.dll` or `pokerchecker.so`) will be in the `build/Release` directory on Windows or the `build` directory on Linux
 
-## Developing the Plugin Further
+## Developing the Plugin
 
-To extend the functionality of the Poker Checker plugin, consider the following:
-
-1. **Understanding the Structure:**
+1. **Understand the Structure:**
    - `src/impl.hpp` and `src/impl.cpp`: Core implementation of poker logic
    - `src/natives.hpp` and `src/natives.cpp`: Bridge between PAWN and C++ code
    - `src/main.cpp`: Plugin entry point and native function registration
 
 2. **Working with CMakeLists.txt:**
    - The `CMakeLists.txt` file in the root directory configures the build process
-   - To add new source files:
+   - Add new source files:
      ```cmake
      add_library(pokerchecker SHARED
          ${EXISTING_SOURCE_FILES}
-         src/your_new_file.cpp
+         src/new_file.cpp
      )
      ```
-   - To link additional libraries:
+   - Link additional libraries:
      ```cmake
      target_link_libraries(pokerchecker
          ${EXISTING_LIBRARIES}
-         your_new_library
+         new_library
      )
      ```
    - To add include directories:
      ```cmake
      target_include_directories(pokerchecker PRIVATE
          ${EXISTING_INCLUDE_DIRS}
-         path/to/new/include/dir
+         path/include/dir
      )
      ```
-   - Remember to regenerate your build files after modifying CMakeLists.txt
+   - Always regenerate your build files after modifying CMakeLists.txt
 
 3. **Adding New Functions:**
    - Implement the logic in `impl.cpp`
@@ -161,45 +178,14 @@ To extend the functionality of the Poker Checker plugin, consider the following:
    - Register the new native in `main.cpp` by adding it to the `native_list` array
    - Update `POKER_CHECKER.inc` with the new native function for PAWN scripts
 
-4. **Modifying Existing Functions:**
-   - Locate the function in `impl.cpp`
-   - Make your changes, ensuring you update any related functions
-   - If the function signature changes, update it in `impl.hpp` and potentially in `natives.cpp`
-
-5. **Testing:**
+4. **Testing:**
    - Add new test cases to `test_pokerchecker.pwn`
    - Run the test script on a SAMP server to verify your changes
 
-## Missing Features
-
-1. **Suit Support**: Adding suit support would allow for more accurate hand evaluations, including:
-   - Proper flush detection
-   - Straight flush and royal flush detection
-
-2. **Probability Calculations**: Add functions to calculate the probability of improving a hand given the current cards and potential players' cards.
-
-3. **Pot Odds Calculation**: Implement a function to calculate pot odds, which can help in decision-making during gameplay.
-
-4. **Hand Strength Evaluation**: Feat an improved hand strength evaluator that takes into account not just the hand rank, but also the specific cards within that rank.
-
-5. **Player Position Handling**: Add support for handling and evaluating the significance of player positions in a poker game.
-
-6. **Hand History and Analysis**: Add features to record and analyze hand histories, which could be useful for player statistics and game review.
-
 ## Integration with playing-cards Library
 
-To enhance the visual and textual representation of cards in your SAMP poker games, consider using the [`playing-cards`](https://github.com/DignitySAMP/omp-playing-cards) library alongside the Poker-Checker Plugin.
-
-The `playing-cards` library complements Poker-Checker Plugin by providing:
-
-1. Easy retrieval of card sprite names for rendering cards on screen
-2. Simple functions to get human-readable card names
-3. Consistent naming conventions for card sets and values
+To enhance the visual representation of cards in your SAMP poker script, use the [`playing-cards`](https://github.com/DignitySAMP/omp-playing-cards)
 
 This combination allows you to handle both the game logic and the presentation aspects of your poker game efficiently.
 
-For installation instructions, usage details, and examples, visit the official repository:
-
-[https://github.com/DignitySAMP/omp-playing-cards](https://github.com/DignitySAMP/omp-playing-cards)
-
-By combining these libraries, you can create more engaging and visually appealing poker games in SAMP, handling everything from game logic to user interface elements with ease.
+By combining these libraries, you can easily create more engaging and visually appealing poker games in your SAMP script, handling everything from game logic to user interface elements.
