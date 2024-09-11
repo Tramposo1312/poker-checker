@@ -32,6 +32,9 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void** ppData) {
 }
 
 extern "C" const AMX_NATIVE_INFO native_list[] = {
+    { "CreateCard", Natives::CreateCard },
+    { "GetCardValue", Natives::GetCardValue },
+    { "GetCardSuit", Natives::GetCardSuit },
     { "CheckPair", Natives::CheckPair },
     { "CheckTwoPairs", Natives::CheckTwoPairs },
     { "CheckThreeOfAKind", Natives::CheckThreeOfAKind },
@@ -39,12 +42,15 @@ extern "C" const AMX_NATIVE_INFO native_list[] = {
     { "CheckFlush", Natives::CheckFlush },
     { "CheckFullHouse", Natives::CheckFullHouse },
     { "CheckFourOfAKind", Natives::CheckFourOfAKind },
+    { "CheckStraightFlush", Natives::CheckStraightFlush },
+    { "CheckRoyalFlush", Natives::CheckRoyalFlush },
     { "GetHandRank", Natives::GetHandRank },
     { "GetBestHand", Natives::GetBestHand },
     { "CompareHands", Natives::CompareHands },
     { "GetHighestCard", Natives::GetHighestCard },
     { "HandRankToString", Natives::HandRankToString },
     { "CardValueToString", Natives::CardValueToString },
+    { "SuitToString", Natives::SuitToString },
     { NULL, NULL }
 };
 

@@ -16,24 +16,27 @@ log-core by maddinat0r.
 
 namespace Impl {
 
-    std::array<int, 5> sortHand(const std::array<int, 5>& hand) {
-        std::array<int, 5> sorted = hand;
-        std::sort(sorted.begin(), sorted.end());
+    std::array<Card, 5> sortHand(const std::array<Card, 5>& hand) {
+        std::array<Card, 5> sorted = hand;
+        std::sort(sorted.begin(), sorted.end(), [](const Card& a, const Card& b) {
+            return a.value < b.value;
+            });
         return sorted;
     }
-    bool checkPair(const std::array<int, 5>& hand) {
+
+    bool checkPair(const std::array<Card, 5>& hand) {
         auto sorted = sortHand(hand);
         for (int i = 0; i < 4; ++i) {
-            if (sorted[i] == sorted[i + 1]) return true;
+            if (sorted[i].value == sorted[i + 1].value) return true;
         }
         return false;
     }
 
-    bool checkTwoPairs(const std::array<int, 5>& hand) {
+    bool checkTwoPairs(const std::array<Card, 5>& hand) {
         auto sorted = sortHand(hand);
         int pairs = 0;
         for (int i = 0; i < 4; ++i) {
-            if (sorted[i] == sorted[i + 1]) {
+            if (sorted[i].value == sorted[i + 1].value) {
                 ++pairs;
                 ++i;
             }
@@ -41,55 +44,51 @@ namespace Impl {
         return pairs == 2;
     }
 
-    bool checkThreeOfAKind(const std::array<int, 5>& hand) {
+    bool checkThreeOfAKind(const std::array<Card, 5>& hand) {
         auto sorted = sortHand(hand);
         for (int i = 0; i < 3; ++i) {
-            if (sorted[i] == sorted[i + 1] && sorted[i] == sorted[i + 2]) return true;
+            if (sorted[i].value == sorted[i + 1].value && sorted[i].value == sorted[i + 2].value) return true;
         }
         return false;
     }
 
-    bool checkStraight(const std::array<int, 5>& hand) {
+    bool checkStraight(const std::array<Card, 5>& hand) {
         auto sorted = sortHand(hand);
         for (int i = 0; i < 4; ++i) {
-            if (sorted[i + 1] - sorted[i] != 1) return false;
+            if (sorted[i + 1].value - sorted[i].value != 1) return false;
         }
         return true;
     }
 
-    bool checkFlush(const std::array<int, 5>& hand) {
-        int suit = hand[0] / 13;
+    bool checkFlush(const std::array<Card, 5>& hand) {
+        Suit suit = hand[0].suit;
         for (int i = 1; i < 5; i++) {
-            if (hand[i] / 13 != suit) return false;
+            if (hand[i].suit != suit) return false;
         }
         return true;
     }
 
-    bool checkFullHouse(const std::array<int, 5>& hand) {
+    bool checkFullHouse(const std::array<Card, 5>& hand) {
         return checkThreeOfAKind(hand) && checkPair(hand);
     }
 
-    bool checkFourOfAKind(const std::array<int, 5>& hand) {
+    bool checkFourOfAKind(const std::array<Card, 5>& hand) {
         auto sorted = sortHand(hand);
-        return (sorted[0] == sorted[3]) || (sorted[1] == sorted[4]);
+        return (sorted[0].value == sorted[3].value) || (sorted[1].value == sorted[4].value);
     }
 
-    bool checkStraightFlush(const std::array<int, 5>& hand) {
-        // We can't check for straight flush without suit information
-        return false;
+    bool checkStraightFlush(const std::array<Card, 5>& hand) {
+        return checkStraight(hand) && checkFlush(hand);
     }
 
-    bool checkRoyalFlush(const std::array<int, 5>& hand) {
+    bool checkRoyalFlush(const std::array<Card, 5>& hand) {
         if (!checkFlush(hand)) return false;
-        std::array<int, 5> values;
-        for (int i = 0; i < 5; i++) {
-            values[i] = hand[i] % 13; // 0-12 represents 2-Ace
-        }
-        std::sort(values.begin(), values.end());
-        return (values[0] == 8 && values[1] == 9 && values[2] == 10 && values[3] == 11 && values[4] == 12);
+        auto sorted = sortHand(hand);
+        return (sorted[0].value == 10 && sorted[1].value == 11 && sorted[2].value == 12 &&
+                sorted[3].value == 13 && sorted[4].value == 14);
     }
 
-    HandRank getHandRank(const std::array<int, 5>& hand) {
+    HandRank getHandRank(const std::array<Card, 5>& hand) {
         if (checkRoyalFlush(hand)) return HandRank::RoyalFlush;
         if (checkStraightFlush(hand)) return HandRank::StraightFlush;
         if (checkFourOfAKind(hand)) return HandRank::FourOfAKind;
@@ -102,8 +101,8 @@ namespace Impl {
         return HandRank::HighCard;
     }
 
-    std::array<int, 5> Impl::getBestHand(const int* cards, size_t numCards) {
-        std::vector<std::array<int, 5>> combinations;
+    std::array<Card, 5> getBestHand(const Card* cards, size_t numCards) {
+        std::vector<std::array<Card, 5>> combinations;
 
         // Generate all 5-card combinations
         for (size_t i = 0; i < numCards - 4; ++i)
@@ -128,12 +127,12 @@ namespace Impl {
         return bestHand;
     }
 
-    int compareHands(const std::array<int, 5>& hand1, const std::array<int, 5>& hand2) {
+    int compareHands(const std::array<Card, 5>& hand1, const std::array<Card, 5>& hand2) {
         HandRank rank1 = getHandRank(hand1);
         HandRank rank2 = getHandRank(hand2);
 
         if (rank1 != rank2) {
-            return static_cast<int>(rank1) - static_cast<int>(rank2);
+            return (rank1 > rank2) ? 1 : -1;
         }
 
         // If ranks are equal, compare high cards
@@ -141,16 +140,18 @@ namespace Impl {
         auto sorted2 = sortHand(hand2);
 
         for (int i = 4; i >= 0; --i) {
-            if (sorted1[i] != sorted2[i]) {
-                return sorted1[i] - sorted2[i];
+            if (sorted1[i].value != sorted2[i].value) {
+                return (sorted1[i].value > sorted2[i].value) ? 1 : -1;
             }
         }
 
         return 0; // Hands are equal
     }
 
-    int getHighestCard(const std::array<int, 5>& hand) {
-        return *std::max_element(hand.begin(), hand.end());
+    Card getHighestCard(const std::array<Card, 5>& hand) {
+        return *std::max_element(hand.begin(), hand.end(), [](const Card& a, const Card& b) {
+            return a.value < b.value;
+        });
     }
 
     const char* handRankToString(HandRank rank) {
@@ -177,4 +178,13 @@ namespace Impl {
         return "Invalid";
     }
 
+    const char* suitToString(Suit suit) {
+        switch (suit) {
+        case Suit::Hearts: return "Hearts";
+        case Suit::Diamonds: return "Diamonds";
+        case Suit::Clubs: return "Clubs";
+        case Suit::Spades: return "Spades";
+        default: return "Unknown";
+        }
+    }
 }
